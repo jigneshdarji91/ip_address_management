@@ -36,19 +36,22 @@ address space looks as follows:
 
 
 ## Usage
-1. Start the script in interactive mode - `python -i ipam.py`
-2. Initialize your network address space
+- Start the script in interactive mode
+```
+python -i ipam.py
+```
+- Initialize your network address space
 ```python
 ipam = IPAM("10.10.0.0/24")
 ```
-3. Allocate subnets
+- Allocate subnets
 ```python
 ipam.add(1000)
 ipam.add(100)
 ipam.add(250)
 ipam.add(60)
 ```
-4. View allocations
+- View allocations
 ```python
 ipam.show()
 ```
