@@ -6,14 +6,10 @@ from operator import itemgetter
 # setup logging
 LOG_FILENAME="ipam.log"
 log.basicConfig(filename=LOG_FILENAME, level=log.DEBUG)
-# create console handler and set level to debug
 ch = log.StreamHandler()
 ch.setLevel(log.DEBUG)
-# create formatter
 formatter = log.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-# add formatter to ch
 ch.setFormatter(formatter)
-# add ch to logger
 log.getLogger().addHandler(ch)
 
 
@@ -62,15 +58,27 @@ class IPAM:
         for netw in self.allocated:
             self.network_view.append([0, netw])
         self.network_view.sort(key=itemgetter(1))
+        log.debug("end")
 
     def show(self):
         print "====Waiting========"
         for size in self.waiting:
             print size
         print "====View==========="
+        smallest_prefix = max(netw[1].prefixlen for netw in self.network_view)
+
         for netw in self.network_view:
+            prefix_diff = (netw[1].prefixlen - self.network.prefixlen)
+            lines = (smallest_prefix - netw[1].prefixlen)
             if netw[0] is 1:
-                print '-'*(netw[1].prefixlen - self.network.prefixlen) + str(netw[1]) + " free"
+                print '-'*20
+                print '\n'*lines
+                print '-'*prefix_diff + "|" + str(netw[1]) + " free"
+                # print '\n'*lines
             else:
-                print '-'*(netw[1].prefixlen - self.network.prefixlen) + str(netw[1])
+                print '-'*20
+                print '\n'*lines
+                print '-'*prefix_diff + "|" + str(netw[1])
+                # print '\n'*lines
+        print '-'*20
         print "====View End======="
