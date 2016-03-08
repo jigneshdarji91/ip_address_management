@@ -17,7 +17,7 @@ ch.setFormatter(formatter)
 log.getLogger().addHandler(ch)
 
 
-class IPAddressManager:
+class IPAM:
 
     def __init__(self, network_):
         log.debug("started network: " + network_)
@@ -27,9 +27,15 @@ class IPAddressManager:
         self.unallocated = [self.network]
         self.waiting = []
 
-    def add_network(self, size):
+    @staticmethod
+    def get_prefix(size):
+        prefix = 32 - math.ceil(math.log(size, 2))
+        log.debug("size: %d prefix length: %d", size, prefix)
+        return prefix
+
+    def add(self, size):
         log.debug("begin")
-        prefix = self.get_prefix(size)
+        prefix = IPAM.get_prefix(size)
         flag = False
         for test_network in self.unallocated:
             if test_network.prefixlen <= prefix:
@@ -57,7 +63,7 @@ class IPAddressManager:
             self.network_view.append([0, netw])
         self.network_view.sort(key=itemgetter(1))
 
-    def show_allocations(self):
+    def show(self):
         print "====Waiting========"
         for size in self.waiting:
             print size
@@ -68,19 +74,3 @@ class IPAddressManager:
             else:
                 print '-'*(netw[1].prefixlen - self.network.prefixlen) + str(netw[1])
         print "====View End======="
-
-    def get_prefix(self, size):
-        prefix = 32 - math.ceil(math.log(size, 2))
-        log.debug("size: %d prefix length: %d", size, prefix)
-        return prefix
-
-ipam = IPAddressManager("192.168.0.0/20")
-ipam.add_network(256)
-ipam.add_network(1000)
-ipam.add_network(2000)
-ipam.add_network(1000)
-ipam.add_network(256)
-ipam.add_network(128)
-ipam.add_network(256)
-
-ipam.show_allocations()
