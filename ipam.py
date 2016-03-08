@@ -1,6 +1,7 @@
 import logging as log
 import ipaddr as ipaddress
 import math
+from operator import itemgetter
 
 # setup logging
 LOG_FILENAME="ipam.log"
@@ -21,13 +22,14 @@ class IPAddressManager:
     def __init__(self, network_):
         log.debug("started network: " + network_)
         self.network = ipaddress.IPv4Network(network_)
+        self.network_view = [self.network]
         self.allocated = []
         self.unallocated = [self.network]
         self.waiting = []
 
     def add_network(self, size):
         log.debug("begin")
-        prefix = self.get_prefix_for_size(size)
+        prefix = self.get_prefix(size)
         flag = False
         for test_network in self.unallocated:
             if test_network.prefixlen <= prefix:
@@ -45,6 +47,17 @@ class IPAddressManager:
             log.info("insufficient address space")
             self.waiting.append(size)
 
+        self.unallocated.sort()
+        self.allocated.sort()
+        self.waiting.sort()
+        self.network_view = []
+        for netw in self.unallocated:
+            self.network_view.append([1, netw])
+        for netw in self.allocated:
+            self.network_view.append([0, netw])
+        self.network_view.sort(key=itemgetter(1))
+
+    def show_allocations(self):
         print "====Unallocated===="
         for netw in self.unallocated:
             print netw
@@ -54,13 +67,25 @@ class IPAddressManager:
         print "====Waiting========"
         for size in self.waiting:
             print size
+        print "====View==========="
+        for netw in self.network_view:
+            if netw[0] is 1:
+                print '-'*(netw[1].prefixlen - self.network.prefixlen) + str(netw[1]) + " free"
+            else:
+                print '-'*(netw[1].prefixlen - self.network.prefixlen) + str(netw[1])
+        print "====View End======="
 
-    def get_prefix_for_size(self, size):
+    def get_prefix(self, size):
         prefix = 32 - math.ceil(math.log(size, 2))
         log.debug("size: %d prefix length: %d", size, prefix)
         return prefix
 
-ipam = IPAddressManager("192.168.0.0/23")
-ipam.add_network(250)
+ipam = IPAddressManager("192.168.0.0/20")
 ipam.add_network(256)
+ipam.add_network(1000)
+ipam.add_network(1000)
 ipam.add_network(256)
+ipam.add_network(128)
+ipam.add_network(256)
+
+ipam.show_allocations()
