@@ -58,12 +58,6 @@ class IPAddressManager:
         self.network_view.sort(key=itemgetter(1))
 
     def show_allocations(self):
-        print "====Unallocated===="
-        for netw in self.unallocated:
-            print netw
-        print "====Allocated======"
-        for netw in self.allocated:
-            print netw
         print "====Waiting========"
         for size in self.waiting:
             print size
@@ -83,6 +77,7 @@ class IPAddressManager:
 ipam = IPAddressManager("192.168.0.0/20")
 ipam.add_network(256)
 ipam.add_network(1000)
+ipam.add_network(2000)
 ipam.add_network(1000)
 ipam.add_network(256)
 ipam.add_network(128)
