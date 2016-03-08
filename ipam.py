@@ -30,10 +30,8 @@ class IPAddressManager:
         prefix = self.get_prefix_for_size(size)
         flag = False
         for test_network in self.unallocated:
-            log.debug("network: " + str(test_network) + " has prefix: " + str(test_network.prefixlen))
             if test_network.prefixlen <= prefix:
                 prefix_diff = int(prefix - test_network.prefixlen)
-                log.debug("network " + str(test_network) + " prefix_diff: " + str(prefix_diff))
                 split_network = test_network.subnet(prefixlen_diff=prefix_diff)
                 log.info("Allocated: " + str(split_network[0]))
                 self.allocated.append(split_network[0])
