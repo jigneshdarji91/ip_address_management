@@ -69,16 +69,16 @@ class IPAM:
 
         for netw in self.network_view:
             prefix_diff = (netw[1].prefixlen - self.network.prefixlen)
-            lines = (smallest_prefix - netw[1].prefixlen)
+            lines = int(math.pow(2, (smallest_prefix - netw[1].prefixlen) + 1))
             if netw[0] is 1:
                 print '-'*20
                 print '\n'*lines
                 print '-'*prefix_diff + "|" + str(netw[1]) + " free"
-                # print '\n'*lines
+                print '\n'*lines
             else:
                 print '-'*20
                 print '\n'*lines
                 print '-'*prefix_diff + "|" + str(netw[1])
-                # print '\n'*lines
+                print '\n'*lines
         print '-'*20
         print "====View End======="
