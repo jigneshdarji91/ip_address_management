@@ -51,7 +51,9 @@ class IPAM:
         if flag is False:
             log.info("insufficient address space")
             self.waiting.append(size)
+        self.update()
 
+    def update(self):
         self.unallocated.sort()
         self.allocated.sort()
         self.waiting.sort()
