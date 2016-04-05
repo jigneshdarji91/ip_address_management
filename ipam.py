@@ -1,3 +1,5 @@
+from bokeh.plotting import figure, output_file, show
+import math
 import logging as log
 import ipaddr as ipaddress
 import math
@@ -12,6 +14,7 @@ formatter = log.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 ch.setFormatter(formatter)
 log.getLogger().addHandler(ch)
 
+graph_width = 1000
 
 class IPAM:
 
@@ -72,13 +75,63 @@ class IPAM:
             lines = int(math.pow(2, (smallest_prefix - netw[1].prefixlen) + 1))
             if netw[0] is 1:
                 print '-'*20
-                print '\n'*lines
+                # print '\n'*lines
                 print '-'*prefix_diff + "|" + str(netw[1]) + " free"
-                print '\n'*lines
+                # print '\n'*lines
             else:
                 print '-'*20
-                print '\n'*lines
+                # print '\n'*lines
                 print '-'*prefix_diff + "|" + str(netw[1])
-                print '\n'*lines
+                # print '\n'*lines
         print '-'*20
         print "====View End======="
+
+    def plot(self):
+        size = []
+        text = []
+        free = []
+        for i in xrange(0, len(self.network_view)):
+            temp_size = 1/(math.pow(2, self.network_view[i][1].prefixlen - self.network.prefixlen))
+            size.append(temp_size)
+            text.append(str(self.network_view[i][1]))
+            free.append(self.network_view[i][0])
+        PlotAddressSpace.plot(size, text, free)
+
+
+class PlotAddressSpace:
+
+    @staticmethod
+    def plot(size, text, free):
+
+        print text
+        print size
+        print free
+        data = {
+            'left': [],
+            'right': [],
+            'text': [],
+            'color': [],
+            'text_center': []
+        }
+
+        left = 0
+        for i in xrange(0, len(size)):
+            data['left'].append(left)
+            data['right'].append(left + size[i] * graph_width)
+            left = data['right'][i]
+            if free[i] is 1:
+                data['color'].append("Green")
+            else:
+                data['color'].append("Yellow")
+            data['text'].append(text[i])
+            data['text_center'].append((data['right'][i] - data['left'][i])/2 + data['left'][i])
+
+        print data['text']
+        output_file("test.html")
+        plot = figure(width=graph_width, height=300)
+        plot.quad(top=1, bottom=0, left=data['left'], right=data['right'],
+                  color=data['color'],
+                  name="hello", line_color="black")
+        plot.text(x=data['text_center'], y=0.5, angle=math.pi/2, text=data['text'], text_align="center")
+
+        show(plot)
