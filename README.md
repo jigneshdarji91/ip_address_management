@@ -19,6 +19,7 @@ given network. To get to that, you divide the network into 2 parts and you get a
 Make sure you have Python 2.7 installed on your machine. Install the *bokeh* and *ipaddr* packages:
 
 > sudo pip install bokeh
+
 > sudo pip install ipaddr
 
 ### Windows
@@ -26,6 +27,7 @@ While installing Python, make sure you choose the "Add Python.exe to PATH" optio
 *bokeh* and *ipaddr* modules for Python
 
 > python -m pip install bokeh
+
 > python -m pip install ipaddr
 
 ## Usage
