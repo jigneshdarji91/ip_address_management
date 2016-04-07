@@ -1,7 +1,7 @@
-# IP Address Management Tool
-A utility to manage IP addresses. Mostly allocating and deallocating CIDR networks.
+# IPv4 CIDR Address Allocation
+A utility to manage allocating and deallocating CIDR networks.
 
-## Problem
+## Problem Statement
 CIDR address allocation is a complex problem. Some might think it is very close to the memory allocation problem. But
 it's more complex than that because of recursively dividing the address space into two till a best fit is found. 
 
@@ -12,28 +12,21 @@ for 1/4th slice, you would have to cut it twice. This would leave you with two s
 
 Let's make things clear with an example. Let's say you have a network 10.10.0.0/20. Now, the Computer Science department
 posts a requirement of a 1000 host machines. This means that the network you'll allocate will be /22 subnet from the
-given network. To get to that, you divide the network into 2 parts and you get a /21 network. Now you pick the left one
-(for ease of policy) and divide it into 2 again and you get a /22 network to allocate. After this tiresome task, your
-address space looks as follows:
+given network. To get to that, you divide the network into 2 parts and you get a /21 network. Now you pick the left one (for ease of policy) and divide it into 2 again and you get a /22 network to allocate. 
 
-------------------------
+## Setup
+### Linux
+Make sure you have Python 2.7 installed on your machine. Install the *bokeh* and *ipaddr* packages:
 
-----|10.10.0.0/22 
+> sudo pip install bokeh
+> sudo pip install ipaddr
 
-------------------------
-    
-----|10.10.4.0/22 free
-    
-------------------------
-  
-  
-  
---|10.10.8.0/21 free
-  
-  
-  
-------------------------
+### Windows
+While installing Python, make sure you choose the "Add Python.exe to PATH" option. Open the command prompt and install
+*bokeh* and *ipaddr* modules for Python
 
+> python -m pip install bokeh
+> python -m pip install ipaddr
 
 ## Usage
 - Start the script in interactive mode
@@ -44,7 +37,8 @@ python -i ipam.py
 ```python
 ipam = IPAM("10.10.0.0/24")
 ```
-- Allocate subnets
+- Allocate subnets according to your size requirements
+NOTE: Subnets allocation policy is left-first. 
 ```python
 ipam.add(1000)
 ipam.add(100)
@@ -53,5 +47,8 @@ ipam.add(60)
 ```
 - View allocations
 ```python
-ipam.show()
+ipam.plot()
 ```
+## TODO:
+- Ability to delete subnets
+- Other subnet allocation policy
